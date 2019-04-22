@@ -15,9 +15,8 @@ import json
 import datetime
 
 class Record(threading.Thread):
-	"""
-	pixivクラスのrecord_stream()で生成される。
-	"""
+	"""pixivクラスのrecord_stream()で生成される。"""
+	
 	def __init__(self,sketch_id,folder_path):
 		super().__init__()
 		self.sketch_id = sketch_id.replace("@","")
@@ -33,10 +32,8 @@ class Record(threading.Thread):
 		self.popen.terminate()
 	
 class Notification(threading.Thread):
-	"""
-	pixivクラスの生成時に同時に生成される。
-	通知関連。
-	"""
+	"""pixivクラスの生成時に同時に生成される。通知関連。"""
+	
 	def __init__(self,sketch_id_list):
 		super().__init__()
 		self.sketch_id_list = sketch_id_list
@@ -70,7 +67,7 @@ class Notification(threading.Thread):
 				except streamlink.exceptions.PluginError:
 					print("一時的にアクセスできない状態か、移動・削除されてしまった可能性があります。:" + url)
 	
-			sleep(int(pixiv.reload_interval_entry.get()))
+			sleep(int(10))
 				
 
 class Pixiv(tk.Tk):
@@ -78,7 +75,7 @@ class Pixiv(tk.Tk):
 	def __init__(self):
 		super().__init__()
 				
-		self.title("Pixiv dayo")
+		self.title("Letart")
 		self.geometry("500x640")
 		self.resizable(False, False)
 
@@ -182,15 +179,11 @@ class Pixiv(tk.Tk):
 		self.bind("<ButtonRelease-1>",self._get_all_indexes_in_listbox)		
 		
 		notification = Notification(self.sketch_id_list)
-		notification.start()
-		
-		
+		notification.start()		
 
 		
 	def _reflect_config_settings(self):
-		"""
-		config.iniの設定をアプリに反映する。
-		"""
+		"""config.iniの設定をアプリに反映する。"""
 		
 		for sketch_id in json.loads(config.get("general", "sketch_id_list")):
 			self.sketch_id_listbox.insert(tk.END,sketch_id)
@@ -217,26 +210,17 @@ class Pixiv(tk.Tk):
 		self.alert_record_start_checkbox.configure(variable=self.alert_record_start_value)
 		
 	def _reflect_app_settings(self):
-		"""
-		アプリの設定をconfig.iniに反映する。
-		"""
+		"""アプリの設定をconfig.iniに反映する。"""
 		
 		
 		config.set(u"general",u"sketch_id",self.my_sketch_id_entry.get())
-		"""
-		sketch_ids_string = ""
-		for sketch_id in self.sketch_id_list:
-			sketch_ids_string+= '"' + sketch_id + '",'
-		sketch_ids_string = "[" + sketch_ids_string[:-1] + "]"	
-		"""
-		
-		sketch_ids_string = "[" + ",".join(['"' + sketch_id + '"' for sketch_id in self.sketch_id_list])  + "]"	
 		config.set(u"general", u"sketch_id",self.my_sketch_id_entry.get())
+		sketch_ids_string = "[" + ",".join(['"' + sketch_id + '"' for sketch_id in self.sketch_id_list])  + "]"	
 		config.set(u"general",u"sketch_id_list",sketch_ids_string)	
 		config.set(u"setting",u"save_folder",self.folder_path)
 		config.set(u"setting",u"auto_record",str(self.auto_record_value.get()))
 		config.set(u"setting",u"alert_stream",str(self.alert_record_start_value.get()))
-		config.set(u"setting",u"reload_interval",int(self.reload_interval_entry.get()))
+		config.set(u"setting",u"reload_interval",str(self.reload_interval_entry.get()))
 
 		f = open('pixiv_config.ini', 'w')
 		config.write(f)
@@ -244,9 +228,7 @@ class Pixiv(tk.Tk):
 		
 		
 	def _get_all_indexes_in_listbox(self,event):
-		"""
-		listboxの要素をクリックした時に、全てのlistboxの選択している要素を更新する。
-		"""
+		"""listboxの要素をクリックした時に、全てのlistboxの選択している要素を更新する。"""
 		
 		self.selecting_recording_listbox_index = self.recording_listbox.index(tk.ACTIVE)
 		self.selecting_recording_listbox_string = self.recording_listbox.get(tk.ACTIVE)
@@ -272,9 +254,7 @@ class Pixiv(tk.Tk):
 			return False
 	
 	def select_save_folder_of_recording_file(self):
-		"""
-		録画ファイルの保存先を設定する。
-		"""
+		"""録画ファイルの保存先を設定する。"""
 		
 		folder = tk.filedialog.askdirectory()
 		
@@ -315,9 +295,8 @@ class Pixiv(tk.Tk):
 				self.recording_stream_list.remove(sketch_id)
 				self.recording_listbox.delete("active")
 	def append_sketch_id_for_watchlist(self):
-		"""
-		ウォッチリストにsketchIDを追加する。
-		"""
+		"""ウォッチリストにsketchIDを追加する。"""
+		
 		inputted_sketch_id = self.watch_list_sketch_id_entry.get()
 		self.sketch_id_listbox.insert(tk.END,inputted_sketch_id)
 		
@@ -328,9 +307,8 @@ class Pixiv(tk.Tk):
 		self._reflect_app_settings()
 		
 	def append_sketch_id_for_streaming_list(self,streaming_sketch_id):
-		"""
-		配信中リストにsketchIDを追加する。
-		"""
+		"""配信中リストにsketchIDを追加する。"""
+		
 		if not streaming_sketch_id in self.streaming_list:
 			self.streaming_list.append(streaming_sketch_id)
 			self.streaming_user_listbox.insert(tk.END,streaming_sketch_id)
@@ -357,9 +335,8 @@ class Pixiv(tk.Tk):
 		
 		
 	def open_save_folder_path(self):
-		"""
-		録画ファイルの保存先ディレクトリをfinderで開く。
-		"""
+		"""録画ファイルの保存先ディレクトリをfinderで開く。"""
+		
 		try:
 			webbrowser.open("file://" + self.folder_path)
 		except AttributeError:
