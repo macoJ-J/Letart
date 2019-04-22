@@ -5,6 +5,7 @@ Alert and record pixiv Sketch stream.
 Only macOS.  
 
 ## Demo
+![sample](https://github.com/macoJ-J/Letart/blob/master/sample.jpg)
 
 
 ## Requirement
