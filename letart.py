@@ -38,6 +38,9 @@ class Notification(threading.Thread):
 		super().__init__()
 		self.sketch_id_list = sketch_id_list
 		
+	def get_sketch_id_list(self,sketch_id_list):
+		self.sketch_id_list = sketch_id_list
+		
 	def run(self):
 		while True:
 			for sketch_id in self.sketch_id_list:
@@ -119,7 +122,7 @@ class Pixiv(tk.Tk):
 		self.streaming_user_listbox = tk.Listbox(self.tab1)
 		self.streaming_user_listbox.pack()
 		
-		self.reload_streaming_user_listbox_button = tk.Button(self.tab1,text="再読み込み")
+		self.reload_streaming_user_listbox_button = tk.Button(self.tab1,text="再読み込み",command=lambda:self.notification.get_sketch_id_list(self.sketch_id_list))
 		self.reload_streaming_user_listbox_button.pack()
 		
 		self.open_save_folder_path_label = tk.Button(self.tab1,text="保存先フォルダを開く",command=self.open_save_folder_path)
@@ -178,8 +181,8 @@ class Pixiv(tk.Tk):
 		self._reflect_config_settings()
 		self.bind("<ButtonRelease-1>",self._get_all_indexes_in_listbox)		
 		
-		notification = Notification(self.sketch_id_list)
-		notification.start()		
+		self.notification = Notification(self.sketch_id_list)
+		self.notification.start()		
 
 		
 	def _reflect_config_settings(self):
@@ -294,6 +297,10 @@ class Pixiv(tk.Tk):
 				thread.stop()
 				self.recording_stream_list.remove(sketch_id)
 				self.recording_listbox.delete("active")
+				print(tkinter.messagebox.showinfo('showinfo','@' + sketch_id + 'の録画を中断しました。/Recording was interrupted.'))
+				break
+				
+				
 	def append_sketch_id_for_watchlist(self):
 		"""ウォッチリストにsketchIDを追加する。"""
 		
@@ -305,6 +312,7 @@ class Pixiv(tk.Tk):
 		self.sketch_id_list.append(inputted_sketch_id)
 				
 		self._reflect_app_settings()
+		self.notification.get_sketch_id_list(sketch_id_list)
 		
 	def append_sketch_id_for_streaming_list(self,streaming_sketch_id):
 		"""配信中リストにsketchIDを追加する。"""
@@ -332,6 +340,7 @@ class Pixiv(tk.Tk):
 			self.sketch_id_list.remove(self.selecting_sketch_id_listbox_string)
 			
 		self._reflect_app_settings()
+		self.notification.get_sketch_id_list(sketch_id_list)
 		
 		
 	def open_save_folder_path(self):
