@@ -7,7 +7,7 @@ Only macOS.
 ## Demo
 ![sample](https://github.com/macoJ-J/Letart/blob/master/sample.jpg)
 
-##Easy Translation
+## Easy Translation
   
 @sketch_idを入力/input to record sketchID  
 メイン/main  
